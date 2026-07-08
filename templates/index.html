@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ศึกพิชิตโดเมนและเรนจ์ | Domain & Range Adventure Quest</title>
+  <meta name="description" content="เกมผจญภัยเรียนรู้คณิตศาสตร์เรื่องโดเมนและเรนจ์ของความสัมพันธ์และฟังก์ชัน">
+  
+  <!-- Google Fonts: Kanit and Outfit for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Background magic grid -->
+  <div class="stars-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Top Controls -->
+  <div class="top-controls">
+    <button id="btn-codex" class="control-btn" title="ตำราเวทมนตร์แห่งเซต">
+      <span class="icon">📖</span>
+      <span>เปิดตำราเวท (Codex)</span>
+    </button>
+    <button id="btn-mute" class="control-btn" title="เปิด/ปิดเสียง">
+      <span id="sound-icon" class="icon">🔊</span>
+      <span id="sound-text">เสียง: เปิด</span>
+    </button>
+  </div>
+
+  <div id="game-container">
+    
+    <!-- ==================== SCREEN 1: START & CUSTOMIZATION ==================== -->
+    <section id="screen-start" class="game-screen active">
+      <div class="glass-card start-card">
+        <div class="logo-container">
+          <div class="magic-circle">
+            <svg viewBox="0 0 100 100" class="rotating-svg">
+              <circle cx="50" cy="50" r="45" stroke="var(--primary-glow)" stroke-width="1" fill="none" stroke-dasharray="8 4" />
+              <polygon points="50,15 80,75 20,75" stroke="var(--cyan-glow)" stroke-width="0.8" fill="none" />
+              <circle cx="50" cy="50" r="20" stroke="var(--accent)" stroke-width="0.5" fill="none" />
+            </svg>
+          </div>
+          <h1 class="game-title">DOMAIN &amp; RANGE</h1>
+          <p class="game-subtitle">ศึกเวทมนตร์พิชิตเซตความสัมพันธ์</p>
+        </div>
+
+        <p class="intro-text">
+          ยินดีต้อนรับสู่อาณาจักร <span class="highlight-cyan">Aetheria</span> ดินแดนที่พลังแห่งความสัมพันธ์และฟังก์ชันสูญเสียความสมดุล! จงสวมบทบาทเป็นจอมเวทคณิตศาสตร์ คืนระเบียบให้ดินแดนด้วยการระบุ <strong>โดเมน (Domain)</strong> และ <strong>เรนจ์ (Range)</strong> ของอสูรคลั่ง!
+        </p>
+
+        <form id="creation-form">
+          <div class="form-group">
+            <label for="player-name">ชื่อผู้กล้าคณิตศาสตร์:</label>
+            <input type="text" id="player-name" placeholder="ระบุชื่อของคุณ..." required maxlength="15" value="จอมเวทไอแซก">
+          </div>
+
+          <div class="form-group">
+            <label>เลือกสายเวทมนตร์คู่กาย:</label>
+            <div class="class-grid">
+              <label class="class-option checked">
+                <input type="radio" name="player-class" value="knight" checked>
+                <div class="class-inner">
+                  <div class="class-emoji">🛡️</div>
+                  <div class="class-details">
+                    <h3>อัศวินแกน X (X-Knight)</h3>
+                    <p>ควบคุมขอบเขตแนวนอน โดดเด่นด้านการหาค่าโดเมน</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="class-option">
+                <input type="radio" name="player-class" value="mage">
+                <div class="class-inner">
+                  <div class="class-emoji">🔮</div>
+                  <div class="class-details">
+                    <h3>นักเวทแกน Y (Y-Mage)</h3>
+                    <p>ร่ายมนตร์ช่วงระดับความสูง โดดเด่นด้านการหาเรนจ์</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Character Face Upload and Decorator -->
+          <div class="form-group">
+            <label>ตกแต่งตัวละคร (อัปโหลดใบหน้าของคุณ):</label>
+            <div class="face-customizer">
+              <div class="preset-selector">
+                <p class="small-label">เลือกตัวละครหลัก:</p>
+                <div class="presets-grid">
+                  <div class="preset-item active" data-preset="red-wizard">🧙‍♂️ <span class="preset-name">ชุดแดง</span></div>
+                  <div class="preset-item" data-preset="blue-ranger">🏹 <span class="preset-name">นายพราน</span></div>
+                  <div class="preset-item" data-preset="gold-knight">🛡️ <span class="preset-name">อัศวิน</span></div>
+                </div>
+              </div>
+
+              <div class="upload-zone" id="face-upload-zone">
+                <input type="file" id="face-file-input" accept="image/*" style="display: none;">
+                <div class="upload-inner" id="upload-inner-prompt">
+                  <span class="upload-icon">📸</span>
+                  <p>ลากรูปใบหน้า หรือคลิกเพื่ออัปโหลด</p>
+                  <span class="upload-subtext">ประมวลผลด้วย MediaPipe Face Detection</span>
+                </div>
+                <div class="preview-box hidden" id="upload-preview-box">
+                  <div class="preview-avatar-wrapper">
+                    <img id="avatar-preview-img" src="" alt="Custom Face Preview">
+                    <div class="avatar-frame"></div>
+                  </div>
+                  <button type="button" class="btn-secondary" id="btn-remove-face">ใช้รูปเริ่มต้น</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="action-btn glow-btn btn-large" id="btn-start-game">
+            <span>ก้าวเข้าสู่การผจญภัย</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: INTERACTIVE TUTORIAL ==================== -->
+    <section id="screen-tutorial" class="game-screen">
+      <div class="glass-card tutorial-card">
+        <div class="tutorial-header">
+          <h2>📜 ตราสารบทเรียนเวทมนตร์: โดเมนและเรนจ์</h2>
+          <button type="button" class="btn-text" id="btn-skip-tutorial">ข้ามการสอน &raquo;</button>
+        </div>
+
+        <div class="tutorial-progress">
+          <div class="t-indicator active" data-step="1">ความสัมพันธ์คืออะไร</div>
+          <div class="t-indicator" data-step="2">หาจากคู่อันดับ</div>
+          <div class="t-indicator" data-step="3">หาจากกราฟ</div>
+          <div class="t-indicator" data-step="4">หาจากฟังก์ชัน</div>
+        </div>
+
+        <div class="tutorial-slides">
+          <!-- Slide 1: Basic Concept -->
+          <div class="t-slide active" id="t-slide-1">
+            <h3>บทที่ 1: ความหมายของความสัมพันธ์ โดเมน และเรนจ์</h3>
+            <p>
+              ในโลกคณิตศาสตร์ <strong>"ความสัมพันธ์" (Relation)</strong> คือ กลุ่มของสิ่งของที่มาจับคู่กัน หรือเขียนให้อยู่ในรูปของ <strong>คู่อันดับ (x, y)</strong>
+            </p>
+            <div class="illustrated-flex">
+              <div class="box-concept">
+                <span class="badge badge-cyan">โดเมน (Domain: D)</span>
+                <p>กลุ่มของ <strong>สมาชิกตัวหน้า (ค่า x)</strong> หรือข้อมูลนำเข้า (Inputs) ทั้งหมดที่เป็นไปได้</p>
+              </div>
+              <div class="box-concept">
+                <span class="badge badge-magenta">เรนจ์ (Range: R)</span>
+                <p>กลุ่มของ <strong>สมาชิกตัวหลัง (ค่า y)</strong> หรือผลลัพธ์ (Outputs) ทั้งหมดที่เกิดขึ้นได้จริง</p>
+              </div>
+            </div>
+            <div class="tip-box">
+              <p>💡 <strong>จำง่ายๆ:</strong> โดเมน = ตัวหน้า (แกนนอน x) | เรนจ์ = ตัวหลัง (แกนตั้ง y)</p>
+            </div>
+          </div>
+
+          <!-- Slide 2: Ordered Pairs & Mapping -->
+          <div class="t-slide" id="t-slide-2">
+            <h3>บทที่ 2: วิธีหาจากคู่อันดับและแผนภาพลูกศร</h3>
+            <p>เมื่อเจอความสัมพันธ์ที่เป็นเซตของคู่ระเบียบ ให้ดึงค่าออกมากดใส่เซต:</p>
+            
+            <div class="example-box">
+              <strong>ตัวอย่าง:</strong> R = { (1, 5), (3, 7), (4, 7) }
+              <ul>
+                <li><span class="text-cyan">โดเมน</span> = ตัวหน้า = { 1, 3, 4 }</li>
+                <li><span class="text-magenta">เรนจ์</span> = ตัวหลัง = { 5, 7 } <em>(เลข 7 ซ้ำกัน เขียนแค่ตัวเดียว)</em></li>
+              </ul>
+            </div>
+
+            <!-- Mini quiz in slide 2 -->
+            <div class="mini-quiz">
+              <p class="quiz-question">🧙‍♂️ <strong>ทดลองร่ายเวท:</strong> กำหนด R = { (2, 8), (5, 9), (6, 8) } โดเมนคืออะไร?</p>
+              <div class="quiz-options">
+                <button type="button" class="quiz-opt-btn" data-correct="true">{ 2, 5, 6 }</button>
+                <button type="button" class="quiz-opt-btn" data-correct="false">{ 8, 9 }</button>
+                <button type="button" class="quiz-opt-btn" data-correct="false">{ 2, 5, 6, 8, 9 }</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Graphs -->
+          <div class="t-slide" id="t-slide-3">
+            <h3>บทที่ 3: วิธีหาจากกราฟระบบพิกัดฉาก</h3>
+            <p>เมื่อส่องดูศัตรูผ่านแผนที่แกนพิกัดฉาก:</p>
+            <ul>
+              <li><strong>หาโดเมน (แกน X):</strong> ดูขอบเขตของกราฟจาก <strong>ซ้ายสุด ไปยัง ขวาสุด</strong></li>
+              <li><strong>หาเรนจ์ (แกน Y):</strong> ดูขอบเขตของกราฟจาก <strong>ล่างสุด ไปยัง บนสุด</strong></li>
+            </ul>
+            <div class="illustrated-graph-tutorial">
+              <div class="graph-tut-box">
+                <span class="circle-sample closed"></span> <strong>จุดทึบ (Closed Circle):</strong> รวมจุดปลายนั้นด้วย ใช้สัญลักษณ์ <code>[</code> หรือ <code>]</code> หรือ <code>&le;</code>
+              </div>
+              <div class="graph-tut-box">
+                <span class="circle-sample open"></span> <strong>จุดโปร่ง (Open Circle):</strong> ไม่รวมจุดปลายนั้น ใช้สัญลักษณ์ <code>(</code> หรือ <code>)</code> หรือ <code>&lt;</code>
+              </div>
+            </div>
+            <div class="example-box">
+              <strong>ตัวอย่าง:</strong> เส้นกราฟเชื่อมจุดทึบ (-2, 1) และ (3, 5) <br>
+              โดเมน = [-2, 3] (คือตั้งแต่ x = -2 ถึง 3) | เรนจ์ = [1, 5] (คือตั้งแต่ y = 1 ถึง 5)
+            </div>
+          </div>
+
+          <!-- Slide 4: Algebraic Functions -->
+          <div class="t-slide" id="t-slide-4">
+            <h3>บทที่ 4: วิธีหาจากเงื่อนไขของฟังก์ชัน (พีชคณิต)</h3>
+            <p>หากวิหารด่านสุดท้ายบอกเงื่อนไขเป็นสมการ จงระวังข้อห้ามเหล็ก 2 ประการ:</p>
+            <div class="rule-flex">
+              <div class="rule-box">
+                <h4>⚠️ ตัวหารห้ามเป็น 0</h4>
+                <p>เช่น f(x) = 5 / (x - 2)<br>ตัวส่วน x - 2 &ne; 0 ดังนั้น <strong>x &ne; 2</strong></p>
+              </div>
+              <div class="rule-box">
+                <h4>⚠️ ในรากที่สองห้ามติดลบ</h4>
+                <p>เช่น f(x) = &radic;(x - 3)<br>ข้างในรูท x - 3 &ge; 0 ดังนั้น <strong>x &ge; 3</strong></p>
+              </div>
+            </div>
+            <div class="tip-box">
+              <p>หากจดจำตำราเรียบร้อยแล้ว จงกดปุ่มถัดไปเพื่อเริ่มทดสอบความกล้าได้เลย!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tutorial-footer">
+          <button type="button" class="btn-secondary" id="btn-tut-prev" disabled>ก่อนหน้า</button>
+          <button type="button" class="action-btn glow-btn" id="btn-tut-next"><span>เข้าใจแล้ว (ถัดไป)</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: BATTLE ARENA ==================== -->
+    <section id="screen-battle" class="game-screen">
+      <!-- Main Battle Panel split into Layout columns -->
+      <div class="battle-grid">
+        
+        <!-- Status Bar Top (Stage Title & HP Overview) -->
+        <div class="battle-header glass-card">
+          <h2 id="stage-title">ด่านที่ 1: ป่าคู่ระเบียบ</h2>
+          <div class="stage-progress-track">
+            <div class="stage-node active" id="node-1">1</div>
+            <div class="stage-node" id="node-2">2</div>
+            <div class="stage-node" id="node-3">3</div>
+            <div class="stage-node" id="node-4">4</div>
+            <div class="stage-node" id="node-5">5</div>
+            <div class="stage-node" id="node-6">6</div>
+            <div class="stage-node" id="node-7">7</div>
+            <div class="stage-node" id="node-8">8</div>
+            <div class="stage-node" id="node-9">9</div>
+          </div>
+        </div>
+
+        <!-- Combat Arena Area (Sprites, HP, Animations) -->
+        <div class="arena-panel glass-card">
+          <!-- Combatants Row -->
+          <div class="combatants">
+            <!-- Player Side -->
+            <div class="combatant player-side">
+              <div class="hp-bar-container">
+                <span class="combatant-name" id="ui-player-name">ผู้เล่น</span>
+                <div class="hp-bar">
+                  <div class="hp-fill player-hp" style="width: 100%;"></div>
+                  <span class="hp-text" id="ui-player-hp-text">100 / 100 HP</span>
+                </div>
+              </div>
+              
+              <!-- Combined Character Sprite (Custom face over dress preset) -->
+              <div class="sprite-wrapper">
+                <div class="character-sprite" id="character-sprite-preset">
+                  <!-- The face avatar is loaded here dynamically -->
+                  <div class="avatar-head-box">
+                    <img id="player-face-sprite" src="" class="hidden" alt="Player Custom Face">
+                    <div id="player-emoji-face" class="emoji-face">🧙‍♂️</div>
+                  </div>
+                  <div class="sprite-body" id="player-sprite-body"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VS Divider -->
+            <div class="vs-divider">VS</div>
+
+            <!-- Enemy Side -->
+            <div class="combatant enemy-side">
+              <div class="hp-bar-container">
+                <span class="combatant-name" id="ui-enemy-name">อสูรร่างไม้</span>
+                <div class="hp-bar">
+                  <div class="hp-fill enemy-hp" style="width: 100%;"></div>
+                  <span class="hp-text" id="ui-enemy-hp-text">100 / 100 HP</span>
+                </div>
+              </div>
+
+              <!-- Enemy Sprite Area (can be custom SVGs or beautifully styled elements) -->
+              <div class="sprite-wrapper">
+                <div class="enemy-sprite" id="enemy-sprite-container">
+                  <!-- Rendered dynamically by javascript -->
+                  <div class="enemy-visual" id="enemy-element">👺</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combat log banner inside the arena -->
+          <div class="combat-log-box" id="combat-log">
+            เริ่มต้นการประจันหน้า! จงช่วยประมวลผลเซตของอสุรกายเพื่อสลายคำสาป
+          </div>
+        </div>
+
+        <!-- Visual Canvas Panel (Draw Graph / Arrow diagrams) -->
+        <div class="visualizer-panel glass-card">
+          <h3 class="panel-subtitle">🔮 กระจกมนตร์ส่องความสัมพันธ์:</h3>
+          <div class="visualizer-container">
+            <canvas id="math-canvas" width="400" height="300"></canvas>
+            <div id="mapping-container" class="hidden">
+              <!-- Mapping circles will be rendered here dynamically -->
+            </div>
+            <div id="algebraic-container" class="hidden">
+              <!-- LaTeX or pretty math format will be rendered here -->
+              <div id="pretty-math-formula"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question & Action Input Panel -->
+        <div class="question-panel glass-card">
+          <div class="question-header">
+            <span class="q-badge" id="ui-question-type">โจทย์คู่อันดับ</span>
+            <button type="button" class="btn-text-small" id="btn-hint">📖 ดูคำใบ้</button>
+          </div>
+          
+          <p id="ui-question-text" class="question-text">
+            กำลังโหลดคำถาม...
+          </p>
+          
+          <div class="input-area">
+            <input type="text" id="answer-input" placeholder="พิมพ์คำตอบที่นี่..." autocomplete="off">
+            <button type="button" class="action-btn glow-btn" id="btn-submit-answer">
+              <span>โจมตี! (ส่งคำตอบ)</span>
+            </button>
+          </div>
+
+          <!-- Active Hint Box -->
+          <div id="hint-box" class="hint-box hidden">
+            <strong>คำใบ้เวทมนตร์:</strong> <span id="hint-text"></span>
+          </div>
+
+          <!-- Solution / Feedback Card Overlay -->
+          <div id="feedback-panel" class="feedback-panel hidden">
+            <div class="feedback-header">
+              <span id="feedback-icon">✅</span>
+              <h4 id="feedback-title">คำตอบถูกต้อง!</h4>
+            </div>
+            <div class="feedback-explanation">
+              <h5>📜 คำอธิบายตำราเวทมนตร์:</h5>
+              <p id="feedback-explanation-text"></p>
+            </div>
+            <button type="button" class="action-btn" id="btn-next-room">
+              <span>เดินทางต่อ &raquo;</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 4: GAME OVER ==================== -->
+    <section id="screen-gameover" class="game-screen">
+      <div class="glass-card death-card">
+        <div class="skull-emblem">💀</div>
+        <h2>พลังชีวิตหมดลง!</h2>
+        <p>
+          พลังของอสุรกายรุนแรงเกินไป จิตวิญญาณแห่งโดเมนและเรนจ์ของคุณสลายไปในความว่างเปล่า... แต่จอมเวทที่ดีจะไม่ละทิ้งการเรียนรู้!
+        </p>
+        <button type="button" class="action-btn glow-btn btn-large" id="btn-restart">
+          <span>เริ่มท้าทายใหม่อีกครั้ง</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 5: VICTORY & Master Certificate ==================== -->
+    <section id="screen-victory" class="game-screen">
+      <div class="glass-card victory-card">
+        <div class="victory-emblem">🏆</div>
+        <h2>สำเร็จภารกิจสูงสุด!</h2>
+        <p>คุณสามารถคืนสมดุลให้ดินแดนแห่งเซตและไขความลับของโดเมนและเรนจ์ได้ครบถ้วน!</p>
+        
+        <!-- Certificate of Masters -->
+        <div class="certificate-container" id="certificate-print-area">
+          <div class="cert-border">
+            <div class="cert-inner">
+              <div class="cert-header">
+                <h3>ใบสัมฤทธิ์บัตรเวทมนตร์คณิตศาสตร์</h3>
+                <p>สถาบันเวทมนตร์มิติความสัมพันธ์แห่งเอเธียเรีย</p>
+              </div>
+              
+              <div class="cert-avatar">
+                <div class="cert-avatar-img-box">
+                  <img id="cert-avatar-img" src="" class="hidden" alt="Player Graduate Face">
+                  <div id="cert-avatar-emoji" class="cert-emoji">🧙‍♂️</div>
+                </div>
+              </div>
+              
+              <div class="cert-body">
+                <p>ขอจารึกนามไว้ว่า</p>
+                <h4 id="cert-player-name">จอมเวทไอแซก</h4>
+                <p>ผู้ก้าวผ่านแบบทดสอบแห่งป่า ขุนเขา และวิหาร และได้รับการแต่งตั้งเป็น</p>
+                <h4 class="cert-title-rank" id="cert-player-title">ปรมาจารย์แห่งโดเมนและเรนจ์ (Master of Domain & Range)</h4>
+              </div>
+              
+              <div class="cert-footer">
+                <div class="signature">
+                  <p>📐 <em>แกนพิกัดฉาก x, y</em></p>
+                  <span>ประธานสมาคมเซต</span>
+                </div>
+                <div class="signature">
+                  <p>🔮 <em>สัญลักษณ์สมาชิก (&in;)</em></p>
+                  <span>ผู้คุมกฎความสัมพันธ์</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="victory-actions">
+          <button type="button" class="action-btn glow-btn" id="btn-print-cert"><span>🖨️ บันทึกใบสัมฤทธิ์บัตร (พิมพ์)</span></button>
+          <button type="button" class="btn-secondary" id="btn-play-again">เล่นใหม่อีกครั้ง</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== CODEX MODAL ==================== -->
+  <div id="codex-modal" class="modal-overlay hidden">
+    <div class="glass-card modal-card">
+      <div class="modal-header">
+        <h3>📘 บันทึกตำราเวทโดเมนและเรนจ์</h3>
+        <button type="button" class="close-btn" id="btn-close-codex">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. คู่อันดับ R = { (x, y) }</h4>
+        <ul>
+          <li><strong>โดเมน (D):</strong> ดึงสมาชิกตัวหน้า (x) ทั้งหมดออกมาเขียนเป็นเซต เช่น { 1, 3 }</li>
+          <li><strong>เรนจ์ (R):</strong> ดึงสมาชิกตัวหลัง (y) ทั้งหมดออกมาเขียนเป็นเซต เช่น { 2, 4 }</li>
+          <li><em>ห้ามใส่ตัวซ้ำในเซต และเขียนเรียงลำดับเสมอ!</em></li>
+        </ul>
+        <hr>
+        <h4>2. การหาจากกราฟ</h4>
+        <ul>
+          <li><strong>โดเมน:</strong> กวาดสายตาทางแนวนอน (ซ้าย &rarr; ขวา) ขอบเขตของค่า x</li>
+          <li><strong>เรนจ์:</strong> กวาดสายตาทางแนวตั้ง (ล่าง &rarr; บน) ขอบเขตของค่า y</li>
+          <li>จุดวงทึบ <code>[ ]</code> คือ รวมจุดปลายนั้นด้วย</li>
+          <li>จุดวงโปร่ง <code>( )</code> คือ ไม่รวมจุดปลายนั้น</li>
+        </ul>
+        <hr>
+        <h4>3. การหาจากสมการฟังก์ชัน</h4>
+        <ul>
+          <li>มีเศษส่วน: <strong>ตัวส่วน &ne; 0</strong> (หาตัวเลขที่ทำให้ตัวส่วนเป็น 0 แล้วตัดออก)</li>
+          <li>มีรากที่สอง (Square Root): <strong>พจน์ในเครื่องหมายรูท &ge; 0</strong> ตั้งอุปสรรคแก้ไขเพื่อหาช่วง x</li>
+          <li>ยกกำลังสอง $x^2$: เนื่องจาก $x^2 \ge 0$ เสมอ ดังนั้น $x^2 + c \ge c$ เสมอ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Elements using standard Synth fallbacks (Web Audio API) -->
+  <script src="/static/game.js"></script>
+</body>
+</html>
